@@ -1,0 +1,74 @@
+{
+  "name": "eisenhower",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/react": "^8.0.1",
+    "@types/jest": "24.0.13",
+    "@types/lodash": "^4.14.134",
+    "@types/nanoid": "^2.0.0",
+    "@types/node": "12.0.7",
+    "@types/react": "16.8.19",
+    "@types/react-dom": "16.8.4",
+    "@types/styled-components": "^4.1.16",
+    "firebase": "^6.1.1",
+    "lodash": "^4.17.11",
+    "nanoid": "^2.0.3",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-scripts": "3.0.1",
+    "styled-components": "^4.3.1",
+    "typescript": "3.5.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "start:local": "yarn run firebase-server & yarn start",
+    "build": "react-scripts build",
+    "test": "yarn run firebase emulators:exec --only database 'react-scripts test'",
+    "test:unit": "react-scripts test --testPathIgnorePatterns 'src/firebase/rules.test.tsx'",
+    "lint": "eslint './src/**/*.{ts,tsx}'",
+    "deploy": "yarn run firebase deploy",
+    "deploy:rules": "yarn run firebase deploy --only database"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "CI=true yarn test:unit"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint",
+      "prettier --list-different"
+    ]
+  },
+  "devDependencies": {
+    "@firebase/testing": "^0.11.6",
+    "@typescript-eslint/eslint-plugin": "^1.11.0",
+    "@typescript-eslint/parser": "^1.11.0",
+    "eslint-config-airbnb": "^17.1.1",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.14.2",
+    "firebase-server": "^1.0.2",
+    "firebase-tools": "^7.1.0",
+    "husky": "^3.0.0",
+    "lint-staged": "^9.2.0",
+    "prettier": "^1.18.2"
+  }
+}

@@ -1,0 +1,11 @@
+html,
+body {
+  height: 100vh;
+  padding: 0px;
+  margin: 0px;
+  font-family: 'Graphik', 'Roboto', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+#root {
+  height: 100vh;
+}

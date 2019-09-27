@@ -1,0 +1,109 @@
+version: 2.1
+
+defaults: &defaults
+  working_directory: ~/grid
+  docker:
+    - image: circleci/node:10.16.0-stretch
+
+commands:
+  persist:
+    description: Persist the workspace
+    steps:
+      - persist_to_workspace:
+          root: ./
+          paths: ./
+
+  attach:
+    description: Attach the workspace
+    steps:
+      - attach_workspace:
+          at: ./
+
+jobs:
+  checkout_and_install:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install
+          command: yarn install --frozen-lockfile
+      - save_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - persist
+
+  lint:
+    <<: *defaults
+    steps:
+      - attach
+      - run:
+          name: Lint
+          command: yarn lint
+
+  test:
+    <<: *defaults
+    steps:
+      - attach
+      - run:
+          name: "Install Java"
+          command: |
+            sudo apt-get update && sudo apt-get install openjdk-8-jdk
+      - run:
+          name: Install Firebase Emulator
+          command: yarn firebase setup:emulators:database --token $FIREBASE_TOKEN
+      - run:
+          name: Setup Firebase CLI
+          command: yarn firebase use --add $FIREBASE_PROJECT_ID
+      - run:
+          name: Test
+          command: yarn test
+
+  test_pr:
+    <<: *defaults
+    steps:
+      - attach
+      - run:
+          name: Test
+          command: yarn test:unit
+
+  build:
+    <<: *defaults
+    steps:
+      - attach
+      - run:
+          name: Build
+          command: yarn build
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - checkout_and_install
+
+      - lint:
+          requires:
+            - checkout_and_install
+
+      - test:
+          context: grid-internal
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - checkout_and_install
+      
+      - test_pr:
+          filters:
+            branches:
+              ignore:
+                - master
+          requires:
+            - checkout_and_install
+
+      - build:
+          requires:
+            - checkout_and_install

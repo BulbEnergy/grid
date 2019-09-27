@@ -1,0 +1,72 @@
+{
+  "rules": {
+    "users": {
+      "$user": {
+        ".read": "auth.uid === $user",
+        "uid": {
+          ".write": "auth.uid === $user",
+          ".validate": "newData.isString() && newData.val() === $user"
+        }
+      }
+    },
+    "boards": {
+      "$board_id": {
+        // all authenticated users can read board
+        ".read": "auth !== null",
+        // default rule: there is no admin or you are the admin
+        ".write": "!root.child('boards/'+$board_id+'/admin').exists() || root.child('boards/'+$board_id+'/admin').val() === auth.uid",
+        ".validate": "newData.hasChildren(['admin', 'layout', 'voting'])",
+        "admin": {
+          // can only assign yourself as admin and can only be done once
+          ".validate": "!data.exists() && newData.val() === auth.uid"
+        },
+        "layout": {
+          ".validate": "newData.hasChildren(['rows', 'cols', 'content'])",
+          "rows": {
+            ".validate": "newData.isNumber()"
+          },
+          "cols": {
+            ".validate": "newData.isNumber()"
+          },
+          "content": {
+            "$cell": {
+              ".validate": "newData.isString() && newData.val().length <= 20"
+            }
+          },
+          // no other children are valid
+          "$other": {
+            ".validate": false
+          }
+        },
+        "votes": {
+          "$user": {
+            // users can only update their own votes
+            ".write": "auth.uid === $user",
+            ".validate": "newData.hasChildren(['x', 'y', 'emoji'])",
+            "x": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1"
+            },
+            "y": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1"
+            },
+            "emoji": {
+              // TODO: actually check is a supported emoji
+              ".validate": "newData.val().length <= 2"
+            },
+            // no other children are valid
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "voting": {
+          ".validate": "newData.isBoolean()"
+        },
+        // no other children are valid
+        "$other": {
+          ".validate": false
+        }
+      }
+    }
+  }
+}
