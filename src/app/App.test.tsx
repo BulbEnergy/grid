@@ -13,6 +13,10 @@ jest.mock('../firebase/firebase', () => ({
     on: () => jest.fn(),
     off: () => jest.fn(),
   })),
+  connectivity: jest.fn(() => ({
+    on: () => jest.fn(),
+    off: () => jest.fn(),
+  })),
 }));
 
 describe('App', () => {

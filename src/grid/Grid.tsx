@@ -6,6 +6,7 @@ import { Vote } from './GridContainer';
 import { AnimatedVote } from './AnimatedVote';
 import { AdminButton } from './AdminButton';
 import { Theme } from '../theme';
+import { ConnectionLost } from '../ConnectionLost';
 
 export interface GridProps {
   id: string;
@@ -16,6 +17,7 @@ export interface GridProps {
   content: string[];
   voteInProgress: boolean;
   isAdmin: boolean;
+  connected: boolean;
   onAdminButtonClicked: () => void;
   onClick: (event: VoteCoords) => void;
 }
@@ -172,6 +174,7 @@ function getDimensions(ref: RefObject<HTMLDivElement>): GridDimensions {
 const Grid: React.FunctionComponent<GridProps> = (props: GridProps) => {
   const {
     rows,
+    connected,
     cols,
     content,
     isAdmin,
@@ -219,6 +222,7 @@ const Grid: React.FunctionComponent<GridProps> = (props: GridProps) => {
 
   return (
     <GridTouchArea>
+      {!connected && <ConnectionLost />}
       <GridFlexContainer>
         <GridDiv
           id="Grid"

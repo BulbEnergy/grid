@@ -62,51 +62,55 @@ interface LoaderLineProps {
   theme: Theme;
 }
 
+const Loader = () => (
+  <LoaderSvg id="Loader">
+    <LoaderLine
+      x1={0.33 * loaderSize}
+      y1={0}
+      x2={0.33 * loaderSize}
+      y2={loaderSize}
+      animation={growVertical}
+      delay={0}
+      xTransformOrigin={0}
+      yTransformOrigin={0}
+    />
+    <LoaderLine
+      x1={0.66 * loaderSize}
+      y1={0}
+      x2={0.66 * loaderSize}
+      y2={loaderSize}
+      animation={growVertical}
+      delay={0.1}
+      xTransformOrigin={0}
+      yTransformOrigin={100}
+    />
+    <LoaderLine
+      x1={0}
+      y1={0.33 * loaderSize}
+      x2={loaderSize}
+      y2={0.33 * loaderSize}
+      animation={growHorizontal}
+      delay={0.2}
+      xTransformOrigin={0}
+      yTransformOrigin={0}
+    />
+    <LoaderLine
+      x1={0}
+      y1={0.66 * loaderSize}
+      x2={loaderSize}
+      y2={0.66 * loaderSize}
+      animation={growHorizontal}
+      delay={0.3}
+      xTransformOrigin={100}
+      yTransformOrigin={0}
+    />
+  </LoaderSvg>
+);
+
 const Loading = () => (
   <FlexContainer>
-    <LoaderSvg id="Loader">
-      <LoaderLine
-        x1={0.33 * loaderSize}
-        y1={0}
-        x2={0.33 * loaderSize}
-        y2={loaderSize}
-        animation={growVertical}
-        delay={0}
-        xTransformOrigin={0}
-        yTransformOrigin={0}
-      />
-      <LoaderLine
-        x1={0.66 * loaderSize}
-        y1={0}
-        x2={0.66 * loaderSize}
-        y2={loaderSize}
-        animation={growVertical}
-        delay={0.1}
-        xTransformOrigin={0}
-        yTransformOrigin={100}
-      />
-      <LoaderLine
-        x1={0}
-        y1={0.33 * loaderSize}
-        x2={loaderSize}
-        y2={0.33 * loaderSize}
-        animation={growHorizontal}
-        delay={0.2}
-        xTransformOrigin={0}
-        yTransformOrigin={0}
-      />
-      <LoaderLine
-        x1={0}
-        y1={0.66 * loaderSize}
-        x2={loaderSize}
-        y2={0.66 * loaderSize}
-        animation={growHorizontal}
-        delay={0.3}
-        xTransformOrigin={100}
-        yTransformOrigin={0}
-      />
-    </LoaderSvg>
+    <Loader />
   </FlexContainer>
 );
 
-export { Loading };
+export { Loading, Loader };
