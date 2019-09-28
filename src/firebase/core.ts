@@ -4,14 +4,17 @@ import { config } from '../config';
 
 export interface FirebaseCoreWrapper {
   init: () => void;
-  loadGrid: (gridId: string, userId: string) => Promise<GridContainerProps>;
+  loadGrid: (
+    gridId: string,
+    userId: string,
+  ) => Promise<GridContainerProps | undefined>;
   createBoard: (
     gridId: string,
     userId: string,
     rows: number,
     cols: number,
     content: string[],
-  ) => Promise<void>;
+  ) => Promise<GridContainerProps | undefined>;
   votesDb: (id: string) => firebase.database.Reference;
   votingDb: (id: string) => firebase.database.Reference;
   connectivity: () => firebase.database.Reference;
@@ -22,8 +25,11 @@ const FirebaseCore: FirebaseCoreWrapper = {
     initializeApp(config.firebase);
   },
 
-  loadGrid(gridId: string, userId: string): Promise<GridContainerProps> {
-    return new Promise<GridContainerProps>(resolve => {
+  loadGrid(
+    gridId: string,
+    userId: string,
+  ): Promise<GridContainerProps | undefined> {
+    return new Promise<GridContainerProps | undefined>(resolve => {
       if (gridId === '') {
         resolve();
       } else {
@@ -59,7 +65,7 @@ const FirebaseCore: FirebaseCoreWrapper = {
     content: string[],
   ) {
     const db = database().ref(`boards/${gridId}`);
-    return new Promise<void>(resolve => {
+    return new Promise<GridContainerProps | undefined>(resolve => {
       db.set({
         layout: {
           rows,
@@ -69,7 +75,7 @@ const FirebaseCore: FirebaseCoreWrapper = {
         votes: {},
         voting: false,
         admin: userId,
-      }).then(resolve);
+      }).then(() => resolve(this.loadGrid(gridId, userId)));
     });
   },
 

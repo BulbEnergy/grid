@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
+import React from 'react';
 import nanoid from 'nanoid'; // eslint-disable-line import/no-unresolved
+import { RouteComponentProps } from 'react-router-dom';
 import { Create } from './Create';
-import firebase from '../firebase/firebase';
+import { NewGridProps } from '../grid/GridLoaderContainer';
 
 export type GridLayout = '2x2' | '3x3';
 
-const CreateContainer: React.FunctionComponent = () => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const link: string = nanoid(10);
-
+const CreateContainer: React.FunctionComponent<RouteComponentProps> = (
+  props: RouteComponentProps,
+) => {
   function create(rows: number, cols: number, content: string[]) {
-    setLoading(true);
-
-    const userId = firebase.getUserId();
-    if (!userId) {
-      throw new Error('User not authenticated!');
-    }
-
-    firebase.createBoard(link, userId, rows, cols, content).then(() => {
-      window.location.assign(`/${link}`); // TODO: find a better way
+    const link: string = nanoid(10);
+    const newGrid: NewGridProps = {
+      rows,
+      cols,
+      content,
+    };
+    props.history.push({
+      pathname: `/${link}`,
+      state: newGrid,
     });
   }
 
@@ -43,7 +43,7 @@ const CreateContainer: React.FunctionComponent = () => {
     }
   }
 
-  return <Create loading={loading} onCreateHandler={createGrid} />;
+  return <Create onCreateHandler={createGrid} />;
 };
 
 export { CreateContainer };

@@ -12,25 +12,13 @@ describe('Create', () => {
 
   it('renders without crashing', () => {
     // given / when / then
-    render(<Create loading={false} onCreateHandler={() => {}} />);
-  });
-
-  it('renders Loading... when loading', () => {
-    // given / when
-    const res: RenderResult = render(
-      <Create loading onCreateHandler={() => {}} />,
-    );
-
-    // then
-    expect(res.container.querySelector('#Loader')).not.toBeNull();
+    render(<Create onCreateHandler={() => {}} />);
   });
 
   it('handler is called on click when 2x2 grid created', () => {
     // given
     const handler = jest.fn();
-    const res: RenderResult = render(
-      <Create loading={false} onCreateHandler={handler} />,
-    );
+    const res: RenderResult = render(<Create onCreateHandler={handler} />);
 
     // when
     fireEvent.click(res.getByTitle('Create 2 x 2 grid'));
@@ -42,9 +30,7 @@ describe('Create', () => {
   it('handler is called on click when 3x3 grid created', () => {
     // given
     const handler = jest.fn();
-    const res: RenderResult = render(
-      <Create loading={false} onCreateHandler={handler} />,
-    );
+    const res: RenderResult = render(<Create onCreateHandler={handler} />);
 
     // when
     fireEvent.click(res.getByTitle('Create 3 x 3 grid'));

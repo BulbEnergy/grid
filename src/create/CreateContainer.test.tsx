@@ -5,42 +5,53 @@ import {
   cleanup,
   RenderResult,
 } from '@testing-library/react';
+import { createMemoryHistory } from 'history';
+import { match } from 'react-router-dom';
 import { CreateContainer } from './CreateContainer';
-import firebase from '../firebase/firebase';
-
-jest.mock('../firebase/firebase', () => ({
-  getUserId: jest.fn(),
-  createBoard: (link: string, rows: number, cols: number) => Promise.resolve(), // eslint-disable-line @typescript-eslint/no-unused-vars
-}));
 
 describe('CreateContainer', () => {
-  beforeEach(() => {
-    jest.spyOn(window.location, 'assign').mockImplementation();
-  });
+  const testHistory = createMemoryHistory();
+  const testMatch: match<string> = {
+    params: '',
+    isExact: false,
+    path: '',
+    url: '',
+  };
 
   afterEach(() => {
-    jest.restoreAllMocks();
-
     cleanup();
   });
 
   it('renders without crashing', () => {
     // given / when / then
-    render(<CreateContainer />);
+    render(
+      <CreateContainer
+        history={testHistory}
+        location={testHistory.location}
+        match={testMatch}
+      />,
+    );
   });
 
-  it('createNewGrid delegates to firebase', () => {
+  it('createNewGrid pushes grid props to history', () => {
     // given
-    const res: RenderResult = render(<CreateContainer />);
-    const getUserIdSpy = jest.spyOn(firebase, 'getUserId');
-    const createBoardSpy = jest.spyOn(firebase, 'createBoard');
-    getUserIdSpy.mockReturnValue('me');
+    testHistory.location.state = {};
+    const res: RenderResult = render(
+      <CreateContainer
+        history={testHistory}
+        location={testHistory.location}
+        match={testMatch}
+      />,
+    );
 
     // when
     fireEvent.click(res.getByTitle('Create 2 x 2 grid'));
 
     // then
-    expect(getUserIdSpy).toHaveBeenCalled();
-    expect(createBoardSpy).toHaveBeenCalled();
+    expect(testHistory.location.state).toEqual({
+      cols: 2,
+      rows: 2,
+      content: ['A', 'B', 'C', 'D'],
+    });
   });
 });

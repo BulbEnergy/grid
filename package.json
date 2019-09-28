@@ -12,10 +12,12 @@
     "@types/react-dom": "16.8.4",
     "@types/styled-components": "^4.1.16",
     "firebase": "^6.1.1",
+    "history": "^4.10.1",
     "lodash": "^4.17.11",
     "nanoid": "^2.0.3",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-router-dom": "^5.1.1",
     "react-scripts": "3.0.1",
     "styled-components": "^4.3.1",
     "typescript": "3.5.1"
@@ -59,6 +61,7 @@
   },
   "devDependencies": {
     "@firebase/testing": "^0.11.6",
+    "@types/react-router-dom": "^5.1.0",
     "@typescript-eslint/eslint-plugin": "^1.11.0",
     "@typescript-eslint/parser": "^1.11.0",
     "eslint-config-airbnb": "^17.1.1",
