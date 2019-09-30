@@ -19,8 +19,12 @@ const App: React.FunctionComponent = () => {
   return (
     <Router>
       <AppLayout>
-        <Route exact path="/" component={CreateContainer} />
-        <Route path="/:gridId" component={GridLoaderContainer} />
+        <Route exact path="/">
+          <CreateContainer />
+        </Route>
+        <Route path="/:gridId">
+          <GridLoaderContainer />
+        </Route>
         <Footer />
       </AppLayout>
     </Router>

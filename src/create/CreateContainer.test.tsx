@@ -6,17 +6,11 @@ import {
   RenderResult,
 } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
-import { match } from 'react-router-dom';
+import { Router } from 'react-router-dom';
 import { CreateContainer } from './CreateContainer';
 
 describe('CreateContainer', () => {
   const testHistory = createMemoryHistory();
-  const testMatch: match<string> = {
-    params: '',
-    isExact: false,
-    path: '',
-    url: '',
-  };
 
   afterEach(() => {
     cleanup();
@@ -25,11 +19,9 @@ describe('CreateContainer', () => {
   it('renders without crashing', () => {
     // given / when / then
     render(
-      <CreateContainer
-        history={testHistory}
-        location={testHistory.location}
-        match={testMatch}
-      />,
+      <Router history={testHistory}>
+        <CreateContainer />
+      </Router>,
     );
   });
 
@@ -37,11 +29,9 @@ describe('CreateContainer', () => {
     // given
     testHistory.location.state = {};
     const res: RenderResult = render(
-      <CreateContainer
-        history={testHistory}
-        location={testHistory.location}
-        match={testMatch}
-      />,
+      <Router history={testHistory}>
+        <CreateContainer />
+      </Router>,
     );
 
     // when

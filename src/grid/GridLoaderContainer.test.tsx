@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, act } from '@testing-library/react';
-import { match } from 'react-router-dom';
+import { Router } from 'react-router-dom';
 
 import { createMemoryHistory } from 'history';
 import { GridLoaderContainer, NewGridProps } from './GridLoaderContainer';
@@ -23,25 +23,18 @@ jest.mock('../firebase/firebase', () => ({
 
 describe('GridLoaderContainer', () => {
   const testHistory = createMemoryHistory();
-  const testMatch: match<string> = {
-    params: '',
-    isExact: false,
-    path: '',
-    url: '',
-  };
 
   afterEach(() => {
     jest.clearAllMocks();
+    testHistory.location.state = undefined;
   });
 
   it('renders without crashing', async () => {
     await act(async () => {
       render(
-        <GridLoaderContainer
-          history={testHistory}
-          location={testHistory.location}
-          match={testMatch}
-        />,
+        <Router history={testHistory}>
+          <GridLoaderContainer />
+        </Router>,
       );
     });
   });
@@ -68,11 +61,9 @@ describe('GridLoaderContainer', () => {
     // when
     await act(async () => {
       render(
-        <GridLoaderContainer
-          history={testHistory}
-          location={testHistory.location}
-          match={testMatch}
-        />,
+        <Router history={testHistory}>
+          <GridLoaderContainer />
+        </Router>,
       );
     });
 
@@ -92,22 +83,16 @@ describe('GridLoaderContainer', () => {
       cols: 3,
       content: [''],
     };
+    testHistory.location.state = newGrid;
 
     loadGridSpy.mockReturnValue(Promise.resolve(undefined));
 
     // when
     await act(async () => {
       render(
-        <GridLoaderContainer
-          history={testHistory}
-          location={{
-            state: newGrid,
-            pathname: '',
-            search: '',
-            hash: '',
-          }}
-          match={testMatch}
-        />,
+        <Router history={testHistory}>
+          <GridLoaderContainer />
+        </Router>,
       );
     });
 
@@ -122,22 +107,16 @@ describe('GridLoaderContainer', () => {
     const loginSpy = jest.spyOn(firebase, 'login');
     const loadGridSpy = jest.spyOn(firebase, 'loadGrid');
     const createGridSpy = jest.spyOn(firebase, 'createBoard');
+    testHistory.location.state = undefined;
 
     loadGridSpy.mockReturnValue(Promise.resolve(undefined));
 
     // when
     await act(async () => {
       render(
-        <GridLoaderContainer
-          history={testHistory}
-          location={{
-            state: undefined,
-            pathname: '',
-            search: '',
-            hash: '',
-          }}
-          match={testMatch}
-        />,
+        <Router history={testHistory}>
+          <GridLoaderContainer />
+        </Router>,
       );
     });
 

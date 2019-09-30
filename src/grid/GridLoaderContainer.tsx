@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { GridContainerProps } from './GridContainer';
 import firebase from '../firebase/firebase';
 import { GridLoader } from './GridLoader';
@@ -10,15 +10,13 @@ export interface NewGridProps {
   content: string[];
 }
 
-const GridLoaderContainer: React.FunctionComponent<RouteComponentProps> = (
-  props: RouteComponentProps,
-) => {
+const GridLoaderContainer: React.FunctionComponent = () => {
   const [gridProps, setGridProps] = useState<GridContainerProps>();
   const [loading, setLoading] = useState<boolean>(true);
 
-  const { location } = props;
-  const gridId: string = window.location.pathname.replace('/', '');
-  const newGridProps: NewGridProps = location ? location.state : undefined;
+  const location = useLocation();
+  const gridId: string = location.pathname.replace('/', '');
+  const newGridProps: NewGridProps = location.state;
 
   useEffect(() => {
     const loadGrid = async () => {

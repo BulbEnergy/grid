@@ -1,14 +1,14 @@
 import React from 'react';
 import nanoid from 'nanoid'; // eslint-disable-line import/no-unresolved
-import { RouteComponentProps } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { Create } from './Create';
 import { NewGridProps } from '../grid/GridLoaderContainer';
 
 export type GridLayout = '2x2' | '3x3';
 
-const CreateContainer: React.FunctionComponent<RouteComponentProps> = (
-  props: RouteComponentProps,
-) => {
+const CreateContainer: React.FunctionComponent = () => {
+  const history = useHistory();
+
   function create(rows: number, cols: number, content: string[]) {
     const link: string = nanoid(10);
     const newGrid: NewGridProps = {
@@ -16,7 +16,7 @@ const CreateContainer: React.FunctionComponent<RouteComponentProps> = (
       cols,
       content,
     };
-    props.history.push({
+    history.push({
       pathname: `/${link}`,
       state: newGrid,
     });
