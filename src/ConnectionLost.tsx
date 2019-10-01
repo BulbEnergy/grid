@@ -14,7 +14,7 @@ const Container = styled.div`
   background-color: rgba(255, 255, 255, 0.8);
 `;
 
-const ConnectionLost: React.FC = () => {
+const ConnectionLost: React.FunctionComponent = () => {
   return (
     <Container data-testid="connection-lost">
       <Loader />
