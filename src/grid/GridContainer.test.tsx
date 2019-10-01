@@ -30,6 +30,10 @@ jest.mock('../firebase/firebase', () => ({
     set: jest.fn(),
   })),
   login: () => Promise.resolve('uid'),
+  connectivity: jest.fn(() => ({
+    on: jest.fn(),
+    off: jest.fn(),
+  })),
 }));
 
 const defaultProps: GridContainerProps = {

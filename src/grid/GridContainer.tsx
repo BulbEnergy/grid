@@ -71,9 +71,11 @@ const GridContainer: React.FunctionComponent<GridContainerProps> = (
   const [myVote, setMyVote] = useState<Vote | undefined>(votes[userId]);
   const [currVotes, setCurrentVotes] = useState<{ [key: string]: Vote }>(votes);
   const [voting, setVoting] = useState<boolean>(voteInProgress);
+  const [connected, setConnected] = useState<boolean>(false);
 
   const votesDb = firebase.votesDb(id);
   const votingDb = firebase.votingDb(id);
+  const connectivity = firebase.connectivity();
 
   useEffect(() => {
     const updateVotes = (snapshot: firebase.database.DataSnapshot) => {
@@ -101,6 +103,15 @@ const GridContainer: React.FunctionComponent<GridContainerProps> = (
     votingDb.on('value', updateVoting);
     return () => votingDb.off('value', updateVoting);
   });
+
+  useEffect(() => {
+    const updateConnectivity = (snapshot: firebase.database.DataSnapshot) =>
+      setConnected(snapshot.val());
+
+    connectivity.on('value', updateConnectivity);
+
+    return () => connectivity.off('value', updateConnectivity);
+  }, [id, connectivity]);
 
   function handleTouch(coords: VoteCoords) {
     // Voting not in-progress or already voted this time
@@ -130,6 +141,7 @@ const GridContainer: React.FunctionComponent<GridContainerProps> = (
     cols,
     content,
     myVote,
+    connected,
     isAdmin: userRole === 'admin',
     votes: Object.values(currVotes).filter(
       (vote: Vote): boolean => !_.isEqual(vote, myVote),

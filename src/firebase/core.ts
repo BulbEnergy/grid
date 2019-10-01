@@ -14,6 +14,7 @@ export interface FirebaseCoreWrapper {
   ) => Promise<void>;
   votesDb: (id: string) => firebase.database.Reference;
   votingDb: (id: string) => firebase.database.Reference;
+  connectivity: () => firebase.database.Reference;
 }
 
 const FirebaseCore: FirebaseCoreWrapper = {
@@ -78,6 +79,10 @@ const FirebaseCore: FirebaseCoreWrapper = {
 
   votingDb(id: string) {
     return database().ref(`boards/${id}/voting`);
+  },
+
+  connectivity() {
+    return database().ref('.info/connected');
   },
 };
 

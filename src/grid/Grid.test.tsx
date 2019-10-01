@@ -12,6 +12,7 @@ const defaultProps: GridProps = {
   voteInProgress: false,
   myVote: undefined,
   isAdmin: false,
+  connected: true,
   onAdminButtonClicked: () => {},
   onClick: (event: VoteCoords) => {}, // eslint-disable-line @typescript-eslint/no-unused-vars
 };
@@ -143,4 +144,16 @@ describe('Grid', () => {
   });
 
   it('scales vote on click', () => {});
+
+  it('displays a connectivity lost warning when disconnected', () => {
+    // given
+    const connected = false;
+    const props: GridProps = { ...defaultProps, connected };
+
+    // when
+    const { getByTestId }: RenderResult = render(<Grid {...props} />);
+
+    // then
+    expect(getByTestId('connection-lost')).not.toBeNull();
+  });
 });
