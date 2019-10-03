@@ -1,25 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
 import nanoid from 'nanoid'; // eslint-disable-line import/no-unresolved
 import { useHistory } from 'react-router-dom';
 import { Create } from './Create';
-import { NewGridProps } from '../grid/GridLoaderContainer';
+import firebase from '../firebase/firebase';
 
 export type GridLayout = '2x2' | '3x3';
 
 const CreateContainer: React.FunctionComponent = () => {
+  const [creating, setCreating] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
   const history = useHistory();
 
-  function create(rows: number, cols: number, content: string[]) {
-    const link: string = nanoid(10);
-    const newGrid: NewGridProps = {
+  async function create(rows: number, cols: number, content: string[]) {
+    if (creating) {
+      return;
+    }
+    setCreating(true);
+
+    const gridId: string = nanoid(10);
+    const userId: string = await firebase.login();
+    const newGrid = await firebase.createBoard(
+      gridId,
+      userId,
       rows,
       cols,
       content,
-    };
-    history.push({
-      pathname: `/${link}`,
-      state: newGrid,
-    });
+    );
+
+    if (newGrid) {
+      history.push({
+        pathname: `/${gridId}`,
+        state: newGrid,
+      });
+    } else {
+      setError(true);
+      setCreating(false);
+    }
   }
 
   function create3x3Grid() {
@@ -43,7 +59,9 @@ const CreateContainer: React.FunctionComponent = () => {
     }
   }
 
-  return <Create onCreateHandler={createGrid} />;
+  return (
+    <Create creating={creating} onCreateHandler={createGrid} error={error} />
+  );
 };
 
 export { CreateContainer };

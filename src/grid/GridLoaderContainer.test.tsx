@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, act } from '@testing-library/react';
-import { Router } from 'react-router-dom';
+import { Router, MemoryRouter } from 'react-router-dom';
 
 import { createMemoryHistory } from 'history';
-import { GridLoaderContainer, NewGridProps } from './GridLoaderContainer';
+import { GridLoaderContainer } from './GridLoaderContainer';
 import firebase from '../firebase/firebase';
 import { Role } from './GridContainer';
 
@@ -31,11 +31,7 @@ describe('GridLoaderContainer', () => {
 
   it('renders without crashing', async () => {
     await act(async () => {
-      render(
-        <Router history={testHistory}>
-          <GridLoaderContainer />
-        </Router>,
-      );
+      render(<GridLoaderContainer />, { wrapper: MemoryRouter });
     });
   });
 
@@ -43,7 +39,6 @@ describe('GridLoaderContainer', () => {
     // given
     const loginSpy = jest.spyOn(firebase, 'login');
     const loadGridSpy = jest.spyOn(firebase, 'loadGrid');
-    const createGridSpy = jest.spyOn(firebase, 'createBoard');
 
     loadGridSpy.mockReturnValue(
       Promise.resolve({
@@ -70,22 +65,22 @@ describe('GridLoaderContainer', () => {
     // then
     expect(loginSpy).toBeCalled();
     expect(loadGridSpy).toBeCalled();
-    expect(createGridSpy).not.toBeCalled();
   });
 
-  it('creates grid if it doesnt already exist', async () => {
+  it('doesnt attempt to load grid from firebase if GridContainerProps provided', async () => {
     // given
     const loginSpy = jest.spyOn(firebase, 'login');
     const loadGridSpy = jest.spyOn(firebase, 'loadGrid');
-    const createGridSpy = jest.spyOn(firebase, 'createBoard');
-    const newGrid: NewGridProps = {
-      rows: 3,
-      cols: 3,
-      content: [''],
+    testHistory.location.state = {
+      id: 'test',
+      rows: 2,
+      cols: 2,
+      votes: {},
+      content: [],
+      voteInProgress: false,
+      userId: 'me',
+      userRole: 'user' as Role,
     };
-    testHistory.location.state = newGrid;
-
-    loadGridSpy.mockReturnValue(Promise.resolve(undefined));
 
     // when
     await act(async () => {
@@ -97,32 +92,7 @@ describe('GridLoaderContainer', () => {
     });
 
     // then
-    expect(loginSpy).toBeCalled();
-    expect(loadGridSpy).toBeCalled();
-    expect(createGridSpy).toBeCalled();
-  });
-
-  it('doesnt attempt to create grid if no NewGridProps provided', async () => {
-    // given
-    const loginSpy = jest.spyOn(firebase, 'login');
-    const loadGridSpy = jest.spyOn(firebase, 'loadGrid');
-    const createGridSpy = jest.spyOn(firebase, 'createBoard');
-    testHistory.location.state = undefined;
-
-    loadGridSpy.mockReturnValue(Promise.resolve(undefined));
-
-    // when
-    await act(async () => {
-      render(
-        <Router history={testHistory}>
-          <GridLoaderContainer />
-        </Router>,
-      );
-    });
-
-    // then
-    expect(loginSpy).toBeCalled();
-    expect(loadGridSpy).toBeCalled();
-    expect(createGridSpy).not.toBeCalled();
+    expect(loginSpy).not.toBeCalled();
+    expect(loadGridSpy).not.toBeCalled();
   });
 });

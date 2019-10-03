@@ -4,9 +4,12 @@ import { Button } from '../shared/Button';
 import { GridLayout } from './CreateContainer';
 import { SvgGrid } from '../SvgGrid';
 import { Theme, DefaultTheme } from '../theme';
+import { Loading } from '../Loading';
 
 export interface CreateProps {
   onCreateHandler: (layout: GridLayout) => void;
+  creating: boolean;
+  error: boolean;
 }
 
 const Container = styled.div`
@@ -35,7 +38,11 @@ const Text = styled.div`
 
 const Create: React.FunctionComponent<CreateProps> = (props: CreateProps) => {
   const theme: Theme = useContext(ThemeContext) || DefaultTheme;
-  const { onCreateHandler } = props;
+  const { onCreateHandler, creating, error } = props;
+
+  if (creating) {
+    return <Loading />;
+  }
 
   return (
     <Container>
@@ -67,6 +74,7 @@ const Create: React.FunctionComponent<CreateProps> = (props: CreateProps) => {
           />
         </GridButton>
       </Row>
+      {error && <Row>Could not create grid, please try again</Row>}
     </Container>
   );
 };
