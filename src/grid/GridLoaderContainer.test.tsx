@@ -11,6 +11,10 @@ jest.mock('../firebase/firebase', () => ({
   login: () => Promise.resolve('uid'),
   loadGrid: jest.fn(),
   createBoard: jest.fn(),
+  connectivity: jest.fn(() => ({
+    on: () => jest.fn(),
+    off: () => jest.fn(),
+  })),
   votesDb: jest.fn(() => ({
     on: () => jest.fn(),
     off: () => jest.fn(),

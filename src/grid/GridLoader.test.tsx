@@ -6,6 +6,10 @@ import { GridContainerProps } from './GridContainer';
 jest.mock('../firebase/firebase', () => ({
   getUserId: jest.fn(),
   init: jest.fn(),
+  connectivity: jest.fn(() => ({
+    on: () => jest.fn(),
+    off: () => jest.fn(),
+  })),
   votesDb: jest.fn(() => ({
     on: () => jest.fn(),
     off: () => jest.fn(),
