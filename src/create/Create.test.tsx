@@ -12,24 +12,38 @@ describe('Create', () => {
 
   it('renders without crashing', () => {
     // given / when / then
-    render(<Create loading={false} onCreateHandler={() => {}} />);
+    render(
+      <Create onCreateHandler={() => {}} error={false} creating={false} />,
+    );
   });
 
-  it('renders Loading... when loading', () => {
+  it('renders Loading... when creating', () => {
     // given / when
     const res: RenderResult = render(
-      <Create loading onCreateHandler={() => {}} />,
+      <Create onCreateHandler={() => {}} error={false} creating />,
     );
 
     // then
     expect(res.container.querySelector('#Loader')).not.toBeNull();
   });
 
+  it('renders error message when there is an error', () => {
+    // given / when
+    const res: RenderResult = render(
+      <Create onCreateHandler={() => {}} error creating={false} />,
+    );
+
+    // then
+    expect(
+      res.getByText('Could not create grid, please try again'),
+    ).not.toBeNull();
+  });
+
   it('handler is called on click when 2x2 grid created', () => {
     // given
     const handler = jest.fn();
     const res: RenderResult = render(
-      <Create loading={false} onCreateHandler={handler} />,
+      <Create onCreateHandler={handler} error={false} creating={false} />,
     );
 
     // when
@@ -43,7 +57,7 @@ describe('Create', () => {
     // given
     const handler = jest.fn();
     const res: RenderResult = render(
-      <Create loading={false} onCreateHandler={handler} />,
+      <Create onCreateHandler={handler} error={false} creating={false} />,
     );
 
     // when

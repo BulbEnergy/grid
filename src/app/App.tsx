@@ -1,10 +1,12 @@
 import React from 'react';
+import { Route, BrowserRouter as Router } from 'react-router-dom';
 import styled from 'styled-components';
+import firebase from '../firebase/firebase';
 import { CreateContainer } from '../create/CreateContainer';
-import { Error } from '../Error';
-import { Loading } from '../Loading';
-import { GridContainer, GridContainerProps } from '../grid/GridContainer';
+import { GridLoaderContainer } from '../grid/GridLoaderContainer';
 import { Footer } from '../shared/Footer';
+
+firebase.init();
 
 const AppLayout = styled.div`
   flex-direction: column;
@@ -13,34 +15,20 @@ const AppLayout = styled.div`
   height: 100%;
 `;
 
-export interface AppProps {
-  loading: boolean;
-  gridId: string;
-  grid?: GridContainerProps;
-}
-
-function withFooter(component: React.ReactNode) {
+const App: React.FunctionComponent = () => {
   return (
-    <AppLayout>
-      {component}
-      <Footer />
-    </AppLayout>
+    <Router>
+      <AppLayout>
+        <Route exact path="/">
+          <CreateContainer />
+        </Route>
+        <Route path="/:gridId">
+          <GridLoaderContainer />
+        </Route>
+        <Footer />
+      </AppLayout>
+    </Router>
   );
-}
-
-const App: React.FunctionComponent<AppProps> = (props: AppProps) => {
-  if (props.loading) {
-    return withFooter(<Loading />);
-  }
-
-  if (props.gridId !== '') {
-    if (props.grid) {
-      return withFooter(<GridContainer {...props.grid} />);
-    }
-    return withFooter(<Error message={"We can't find that grid"} />);
-  }
-
-  return withFooter(<CreateContainer />);
 };
 
 export { App };

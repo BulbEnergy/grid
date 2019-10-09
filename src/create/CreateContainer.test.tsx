@@ -4,43 +4,99 @@ import {
   fireEvent,
   cleanup,
   RenderResult,
+  wait,
+  act,
 } from '@testing-library/react';
+import { createMemoryHistory } from 'history';
+import { Router, MemoryRouter } from 'react-router-dom';
 import { CreateContainer } from './CreateContainer';
 import firebase from '../firebase/firebase';
+import { Role, GridContainerProps } from '../grid/GridContainer';
+
+jest.mock('nanoid', () => {
+  return () => 'gridId';
+});
 
 jest.mock('../firebase/firebase', () => ({
-  getUserId: jest.fn(),
-  createBoard: (link: string, rows: number, cols: number) => Promise.resolve(), // eslint-disable-line @typescript-eslint/no-unused-vars
+  login: () => 'uid',
+  createBoard: () => jest.fn(),
 }));
 
 describe('CreateContainer', () => {
-  beforeEach(() => {
-    jest.spyOn(window.location, 'assign').mockImplementation();
-  });
-
   afterEach(() => {
-    jest.restoreAllMocks();
-
     cleanup();
+    jest.clearAllMocks();
   });
 
   it('renders without crashing', () => {
     // given / when / then
-    render(<CreateContainer />);
+    render(<CreateContainer />, { wrapper: MemoryRouter });
   });
 
-  it('createNewGrid delegates to firebase', () => {
+  it('createNewGrid creates grid and pushes grid props to history', async () => {
     // given
-    const res: RenderResult = render(<CreateContainer />);
-    const getUserIdSpy = jest.spyOn(firebase, 'getUserId');
-    const createBoardSpy = jest.spyOn(firebase, 'createBoard');
-    getUserIdSpy.mockReturnValue('me');
+    const testHistory = createMemoryHistory();
+    const loginSpy = jest.spyOn(firebase, 'login');
+    const historyPushSpy = jest.spyOn(testHistory, 'push');
+    const createGridSpy = jest.spyOn(firebase, 'createBoard');
+    const testGrid: GridContainerProps = {
+      id: 'test',
+      rows: 2,
+      cols: 2,
+      votes: {},
+      content: [],
+      voteInProgress: false,
+      userId: 'me',
+      userRole: 'user' as Role,
+    };
+    createGridSpy.mockReturnValue(Promise.resolve(testGrid));
+
+    const res: RenderResult = await render(
+      <Router history={testHistory}>
+        <CreateContainer />
+      </Router>,
+    );
 
     // when
-    fireEvent.click(res.getByTitle('Create 2 x 2 grid'));
+    await fireEvent.click(res.getByTitle('Create 2 x 2 grid'));
 
     // then
-    expect(getUserIdSpy).toHaveBeenCalled();
-    expect(createBoardSpy).toHaveBeenCalled();
+    expect(loginSpy).toBeCalled();
+    expect(createGridSpy).toBeCalledWith('gridId', 'uid', 2, 2, [
+      'A',
+      'B',
+      'C',
+      'D',
+    ]);
+
+    await wait(() =>
+      expect(historyPushSpy).toHaveBeenCalledWith({
+        pathname: '/gridId',
+        state: testGrid,
+      }),
+    );
+  });
+
+  it('displays an error if creating a new grid fails', async () => {
+    // given
+    const testHistory = createMemoryHistory();
+    const createGridSpy = jest.spyOn(firebase, 'createBoard');
+    createGridSpy.mockReturnValue(Promise.resolve(undefined));
+
+    const res: RenderResult = await render(
+      <Router history={testHistory}>
+        <CreateContainer />
+      </Router>,
+    );
+
+    // when
+    await act(async () => {
+      await fireEvent.click(res.getByTitle('Create 2 x 2 grid'));
+    });
+
+    // then
+    expect(
+      res.getByText('Could not create grid, please try again'),
+    ).not.toBeNull();
   });
 });
