@@ -1,6 +1,8 @@
 # GRID
 
-GRID is a collaborative planning and voting tool. It can be used by teams for estimating tasks, establishing consensus and prioritizing work.
+GRID is a collaborative planning and voting tool. It can be used by teams for estimating tasks, establishing consensus and prioritizing work. You can try it out at https://gridvote.app.
+
+![Preview of GRID](preview.gif?raw=True)
 
 ## Getting starting
 
