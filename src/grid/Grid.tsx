@@ -252,7 +252,7 @@ const Grid: React.FunctionComponent<GridProps> = (props: GridProps) => {
 
       {myVote && (
         <AnimatedVote
-          key="myVote"
+          key={`myVote_${myVote.x}_${myVote.y}`}
           x={dimensions.x + myVote.x * dimensions.width}
           y={dimensions.y + myVote.y * dimensions.height}
           emoji={myVote.emoji}
