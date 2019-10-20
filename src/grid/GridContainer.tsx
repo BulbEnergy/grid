@@ -114,8 +114,8 @@ const GridContainer: React.FunctionComponent<GridContainerProps> = (
   }, [id, connectivity]);
 
   function handleTouch(coords: VoteCoords) {
-    // Voting not in-progress or already voted this time
-    if (!voting || myVote) {
+    // Voting not in-progress
+    if (!voting) {
       return;
     }
 
