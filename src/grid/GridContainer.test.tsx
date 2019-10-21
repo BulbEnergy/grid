@@ -105,7 +105,7 @@ describe('GridContainer', () => {
     expect(mockVotesDbChildSet).not.toBeCalled();
   });
 
-  it('doesnt allow voting when already voted', () => {
+  it('allows voting when already voted, if the vote is still in progress', () => {
     // given
     const votes = { aUserId: { emoji: '🐰', x: 0.5, y: 0.5 } };
     const voteInProgress = true;
@@ -122,8 +122,8 @@ describe('GridContainer', () => {
 
     // then
     expect(firebase.votesDb).toHaveBeenCalledWith('aGridId');
-    expect(mockVotesDbChild).not.toBeCalled();
-    expect(mockVotesDbChildSet).not.toBeCalled();
+    expect(mockVotesDbChild).toBeCalled();
+    expect(mockVotesDbChildSet).toBeCalled();
   });
 
   it('updates votes when voting not in progress', async () => {
