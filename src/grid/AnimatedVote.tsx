@@ -36,6 +36,7 @@ const EmojiWrapper = styled.div`
   animation-delay: ${(props: VoteProps) => props.delay}s;
   animation-fill-mode: forwards;
   font-size: 50px;
+  user-select: none;
 `;
 
 const AnimatedVote = (props: VoteProps) => {

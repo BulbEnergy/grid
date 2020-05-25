@@ -94,6 +94,7 @@ const GridDiv = styled.div`
   :hover {
     cursor: pointer;
   }
+  user-select: none;
 `;
 
 const GridCell = styled.div`
